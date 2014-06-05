@@ -1,0 +1,89 @@
+<!-- views/partial/usersprofile.ejs -->
+<!doctype html>
+    <!--script> angular.module('adminApp', ['ngAnimate']); </script-->
+
+    <style>
+    	body { padding-top:10px; word-wrap:break-word; } 
+        .fader.ng-hide-remove {
+            opacity: 1.0;
+            display: block !important;
+            transition: opacity 3s;
+        }
+        .fader.ng-hide-remove-active {
+            opacity: 0;
+        }
+    </style>
+<div class="container">
+    <script>
+        function usersCtrl($scope, $http, UserService) {
+            $scope.message = "";
+            $scope.names = {username: "admin"};
+            $scope.passwd = "";
+            $scope.users = UserService.users;
+    	    // delete user
+    	    $scope.delUser = function(username) {
+    	        $http.delete('/users/' + username)
+    	        	.success(function(users) {
+                        console.log(users);
+                        $scope.users = [];
+    	                $.each(users,function(i,user){$scope.users.push(user.local.username)});
+                        console.log($scope.users);
+                        UserService.users = $scope.users;
+                        $scope.names = {username: "admin"};
+                                    //console.log($scope.users);
+    	        	})
+    	        	.error(function(data) {
+    	        		console.log('Error: ' + data);
+    	        	});
+    	    };
+            $scope.chgpwd = function(username, password) {
+                $http.post('/chgpwd', {username: username, password: password})
+                    .success(function(data) {
+                        $scope.passwd = "";
+                        $scope.message = "password has been changed!";
+                        setTimeout(function(){$scope.message = "";$scope.$apply()}, 3000);
+                    })
+                    .error(function(data) {
+                        console.log('Error: ' + data);
+                        $scope.message = "Error try again";
+                    });
+            };
+            if(! UserService.isLogged){
+                window.location = "/";
+            }
+        }
+    </script>
+    
+    
+    <div ng-controller="usersCtrl">
+    
+        <!-- USER LIST -->
+        <div class="row">
+            <!--div class="well col-xs-2" ng-repeat="user in users"-->
+            <div class="btn-group" data-toggle="buttons-radio" ng-repeat="user in users">
+                <!--input type="radio" ng-model="names.username" name="username" ng-value="user" /-->
+                <button type="button" class="btn btn-info btn-lg" ng-model="names.username" name="username" ng-click="names.username=user" style="margin: 3px">
+                    <span class="fa fa-user"></span> 
+                    <strong>{{user}}</strong>
+                </button>
+            </div>
+        </div>
+    
+        <!-- USER MANAGEMENT FORM -->
+        <div  ng-hide="names.username==''">
+            <div class="form-group">
+                <label>User name</label>
+                <div class="form-control" disabled>{{names.username}}</div>
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" class="form-control" name="password" ng-model="passwd" ng-value="passwd" />
+            </div>
+    
+            <button type="button" class="btn btn-warning btn-lg" name="CHGPWD" ng-click="chgpwd(names.username,passwd)">change password</button>
+            <button type="button" class="btn btn-warning btn-lg" name="DELUSER" ng-hide="names.username=='admin'" ng-click="delUser(names.username)">delete user</button>
+        </div>
+        <div id="messageBox" class="alert alert-danger fader" ng-hide="message==''">{{message}}</div>
+    </div>
+
+</div>

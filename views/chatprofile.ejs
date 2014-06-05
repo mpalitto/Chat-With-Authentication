@@ -1,0 +1,101 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html ng-app='chatbox'>
+<head>
+    <title>CHAT</title>
+    <script src="jquery.js" type="text/javascript"></script>
+    <script src="angular.min.js" type="text/javascript"></script>
+    <script src="ui-bootstrap-custom-tpls-0.10.0.min.js" type="text/javascript"></script>
+    <script src="app.js" type="text/javascript"></script>
+    <script src="accordionController.js" type="text/javascript"></script>
+    <script src="chatboxController.js" type="text/javascript"></script>
+    <script src="WSservice.js" type="text/javascript"></script>
+    
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+		/*body 		{ padding-top:80px; word-wrap:break-word; } */
+        .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+        html,
+        body { margin:0; padding:0; height:100%; }
+        #viewport { min-height:100%; position:relative; }
+        #chatboxes{ position: fixed; bottom: 0; right: 0; z-index: 10; }
+        .chatbox{ display: none; margin-right: 10px; float: left; background: #000; border-radius:7px; width:200px; z-index: 10; }
+        .chatbox > .chatboxhead{ height:26px; background: #666; font-size:20px; padding:3px; color:#CCC; }
+        .chatbox > .chatboxbody{ background:#333; padding:1px; color:#FFF; }
+        .chatbox > .chatboxfoot{ background: #666; padding:1px; }
+        .alert-success { color: #468847; background-color: #dff0d8; border-color: #d6e9c6; }
+    </style>
+</head>
+<body>
+<!--div class="container"-->
+<div id="viewport" ng-controller='chatboxController'>
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> CHAT ROOM</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+    <table width="100%" height="100%">
+    <tr><td width="222">
+    <div ng-controller="AccordionDemoCtrl" class="well">
+      <label class="checkbox">
+        <input type="checkbox" ng-model="oneAtATime">
+        Open only one at a time
+      </label>
+      <accordion close-others="oneAtATime">
+
+          <accordion-group heading="Logged in users" is-open="status.isFirstOpen">
+              <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('Matteo')" style="margin: 2px">
+                  <span class="fa fa-user"></span> <strong></strong>Matteo 
+              </button>
+              <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('Bart')" style="margin: 2px">
+                  <span class="fa fa-user"></span> <strong></strong>Bart 
+              </button>
+              <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('William')" style="margin: 2px">
+                  <span class="fa fa-user"></span> <strong></strong>William 
+              </button>
+              <!-- USER LIST -->
+              <% users.forEach(function(user,i){ %>
+                    <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('<%= user %>')" style="margin: 2px">
+                        <span class="fa fa-user"></span> <strong></strong> <%= user %>  
+                    </button>
+              <% }); %>
+          </accordion-group>
+
+          <accordion-group heading="Account Management">
+            <div class="form-group" align="center">
+                <label>New Password</label>
+                <input type="password" class="form-control" name="password" ng-model="passwd" ng-value="passwd" style="margin: 2px"/>
+
+                <button type="button" class="btn btn-warning" name="CHGPWD" ng-click="chgpwd(names.username,passwd)" style="margin: 2px">change password</button>
+                <button type="button" class="btn btn-warning" name="DELUSER" ng-hide="names.username=='admin'" ng-click="delUser(names.username)" style="margin: 2px">delete Account</button>
+            </div>
+          </accordion-group>
+
+          <accordion-group heading="{{group.title}}" ng-repeat="group in groups">
+            {{group.content}}
+          </accordion-group>
+
+          <accordion-group heading="Dynamic Body Content">
+            <p>The body of the accordion group grows to fit the contents</p>
+              <button class="btn btn-default btn-sm" ng-click="addItem()">Add Item</button>
+              <div ng-repeat="item in items">{{item}}</div>
+          </accordion-group>
+
+          <accordion-group is-open="status.open">
+              <accordion-heading>
+                  <i>I can have markup, too! </i>
+              </accordion-heading>
+              This is just some content to illustrate fancy headings.
+          </accordion-group>
+
+      </accordion>
+    </div>
+    </td><td style="vertical-align:top">
+    <div id="msgBox" class="alert" ng-class="alerttype" ng-init="msg='not connected'">{{msg}}</div>
+    </td></tr>
+    <div id="chatboxes"> </div>
+
+</div>
+</body>
+</html>

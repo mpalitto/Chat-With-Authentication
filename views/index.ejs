@@ -53,15 +53,6 @@
       <accordion close-others="oneAtATime">
 
           <accordion-group heading="Logged in users" is-open="status.isFirstOpen">
-              <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('Matteo')" style="margin: 2px">
-                  <span class="fa fa-user"></span> <strong></strong>Matteo 
-              </button>
-              <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('Bart')" style="margin: 2px">
-                  <span class="fa fa-user"></span> <strong></strong>Bart 
-              </button>
-              <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox('William')" style="margin: 2px">
-                  <span class="fa fa-user"></span> <strong></strong>William 
-              </button>
               <div ng-repeat="user in userList">
                     <button class="btn btn-info" href='javascript:void(null);' ng-click="CreateBox(user)" style="margin: 2px">
                         <span class="fa fa-user"></span> <strong></strong>{{user}}
@@ -99,7 +90,7 @@
       </accordion>
     </div>
     </td><td style="vertical-align:top">
-    <div id="msgBox" class="alert" ng-class='"alert-success"' ng-init="msg='not connected'">{{alerttype}}: {{msg}}</div>
+    <div id="msgBox" class="{{alert.type}}">{{alert.type}}: {{alert.msg}}</div>
     <div class="container" ng-view></div>
     </td></tr></table>
     <div id="chatboxes"> </div>

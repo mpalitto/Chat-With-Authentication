@@ -15,6 +15,6 @@ var mainApp = angular.module('mainApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap',
         console.log(next.templateUrl);
         console.log(next);
         console.log('is logged: '+UserService.isLogged+' is public: '+next.public);
-        if(! UserService.isLogged && ! next.public) $location.path('/auth');
+        //if(! UserService.isLogged && ! next.public) $location.path('/auth');
     });
 });

@@ -65,11 +65,13 @@ module.exports = function(app, passport, sessionStore, server) {
 	// LOGOUT ==============================
 	// =====================================
 	app.get('/logout', function(req, res) {
-            var username = req.user.local.username;
-            console.log(username + req.user.local);
-            req.logout();
-            req.session.destroy();
-            sendUserLists(req, res, sessionStore, server, username);
+            if (req.user) {
+                var username = req.user.local.username;
+                console.log(username + req.user.local);
+                req.logout();
+                req.session.destroy();
+                sendUserLists(req, res, sessionStore, server, username);
+            }
             res.redirect('/');
 	});
 
@@ -145,26 +147,36 @@ module.exports = function(app, passport, sessionStore, server) {
         //     console.log(req.body.username+req.body.password);
         // });
 
-var partialPermissions = {
-    users: 'admin',
-    sessions: 'logged',
-    auth: 'public',
-    login: 'public',
-    signup: 'public'
-};
-
-var userPermissions = {
-    admin: 'admin',
-    Matteo: 'admin'
+var partial = {
+    usersprofile: { view: { admin: 'allow', Matteo: 'allow' } },
+    chatprofile: { view: { all: 'isLogged' } },
+    authentication: { view: { all: 'allow' } },
+    login: { view: { all: 'allow' } },
+    signup: { view: { all: 'allow' } }
 };
 
         app.get('/partials/:page', function (req, res) {
+            var isLogged = false;
             var page = req.params.page;
             var name = page.substring(0, page.length - 4);
-            console.log(page+': '+partialPermissions[name]);
-            //if(! req.user && partialPermissions[name] != 'public') { return }
-            //if(partialPermissions[name] == 'admin' && userPermission[req.user.local.username] != 'admin'){ return }
-            res.render('partials/' + page);
+            console.log(page+': '+partial[name]['view']['all']);
+            if(req.user) { isLogged = true } else { isLogged = false };
+            console.log(isLogged);
+            if(partial[name]['view']['all'] == 'allow') { 
+                console.log('rendering... allow all'); 
+                res.render('partials/' + page);
+            } else if(partial[name]['view']['all'] == 'isLogged' && isLogged) {
+                console.log('rendering... allow logged'); 
+                res.render('partials/' + page);
+            }
+            else if(isLogged && partial[name]['view'][req.user.local.username] == 'allow') {
+                console.log('rendering... allow user'); 
+                res.render('partials/' + page);
+            }
+            else {
+                console.log('not allowed... redirecting'); 
+                res.redirect('partials/authentication.ejs');
+            }
         });
 
 };

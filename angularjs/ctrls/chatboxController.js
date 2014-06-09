@@ -1,7 +1,9 @@
 mainApp.controller('chatboxController', function($scope, $compile, ChatService, UserService){
   $scope.userList = [];
   $scope.sendthis = {};
-  $scope.alerttype = 'alert-danger';
+  $scope.alert = {};
+  $scope.alert.type = 'alert alert-danger';
+  $scope.alert.msg = 'not connected';
   $scope.isLogged = false;
   $scope.username = "";
 
@@ -30,8 +32,10 @@ mainApp.controller('chatboxController', function($scope, $compile, ChatService, 
   ChatService.subscribe(function(message) {
     console.log(message);
     if(message.from == "sys") {
-        $scope.msg = message.msg;
-        $scope.alerttype = message.type;
+        $scope.alert.msg = message.msg;
+        //$scope.alerttype = message.type;
+        $scope.alert.type = 'alert alert-success';
+        $scope.$apply();
     } else if(message.from == "userList") {
         $scope.userList = message.userList;
         $scope.$apply();

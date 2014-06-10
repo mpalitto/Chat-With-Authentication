@@ -179,6 +179,15 @@ var partial = {
             }
         });
 
+	app.get('/amIloggedIN', function(req, res) {
+            var username = "";
+            if(req.user) {
+                username = req.user.local.username;
+                sendUserLists(req, res, sessionStore, server, username);
+            } else {
+                res.send([{ from: 'username', username: "" }]);
+            }
+	});
 };
 
 function isAdmin(req, res, next) {
@@ -207,9 +216,11 @@ function sendUserLists(req, res, sessionStore, server, username) {
                 var response = [];
                 console.log('username: '+username);
                 console.log(loggedINusers);
-                if(req.user != null) //it is a login the user is not in the sessionStore yet
+                if(req.user != null) { //it is a login the user is not in the sessionStore yet
                     userList = [ username ]; //add it to the list
-                loggedINusers.forEach(function(user){ var username=JSON.parse(user).username; if(username) { userList.push(username) } });
+                    response.push({from: 'username', username: username});
+                }
+                loggedINusers.forEach(function(user){ var un=JSON.parse(user).username; if(un && un != username) { userList.push(un) } });
                 if(req.user == null) { //it is a logout the user is still in the sessionStore
                     userList.splice(userList.indexOf(username), 1); //remove it from the list
                 }

@@ -6,6 +6,7 @@
                 .success(function(messages) {
                    console.log(messages);
                    $.each(messages, function( i, message ) {
+                       console.log('authController:');
                        console.log(message);
                        if(message.from == "loggedINuserList") {
                            console.log(message.userList);

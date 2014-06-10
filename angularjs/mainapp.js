@@ -7,7 +7,35 @@ var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
                       .when('/sessions',{templateUrl: '/partials/chatprofile.ejs', public: false})
                       .otherwise({ redirectTo: '/auth'});
     }])
-.run( function($rootScope, $location, UserService) {
+.run( function($rootScope, $http, $location, UserService, ChatService) {
+    $http.get('/amIloggedIN').success(function(messages) {
+        $.each(messages, function( i, message ) {
+            console.log(message);
+            if(message.from == "username") {
+                if(message.username != "") {
+                    UserService.isLogged = true;
+                    UserService.username = message.username;
+                    UserService.sendISlogged();
+                    ChatService.connect(UserService.username);
+                } else {
+                    UserService.isLogged = false;
+                    UserService.username = "";
+                    UserService.sendISlogged();
+                    window.location = '#/auth';
+                }
+            } else if(message.from == "loggedINuserList") {
+                console.log(message.userList);
+                ChatService.userList = message.userList;
+                ChatService.sendUserList();
+            } else if(message.from == "registeredUserList") {
+                console.log(message.userList);
+                UserService.users = message.userList;
+            } else {
+                console.log('message type not recognized: '+message.from)
+            }
+        });
+
+    });
     // register listener to watch route changes
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
         //console.log(current.templateUrl);

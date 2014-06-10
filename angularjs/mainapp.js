@@ -1,4 +1,4 @@
-var mainApp = angular.module('mainApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'heaven'])
+var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
     .config(['$routeProvider', function($routeProvider){
         $routeProvider.when('/login',{templateUrl: '/partials/login.ejs', public: true})
                       .when('/signup',{templateUrl: '/partials/signup.ejs', public: true})
@@ -8,7 +8,6 @@ var mainApp = angular.module('mainApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap',
                       .otherwise({ redirectTo: '/auth'});
     }])
 .run( function($rootScope, $location, UserService) {
-
     // register listener to watch route changes
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
         //console.log(current.templateUrl);

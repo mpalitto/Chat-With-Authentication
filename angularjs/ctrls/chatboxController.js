@@ -1,4 +1,4 @@
-mainApp.controller('chatboxController', function($scope, $compile, ChatService, UserService){
+mainApp.controller('chatboxController', function($timeout, $scope, $compile, ChatService, UserService){
   $scope.userList = [];
   $scope.sendthis = {};
   $scope.alert = {};
@@ -32,13 +32,14 @@ mainApp.controller('chatboxController', function($scope, $compile, ChatService, 
   ChatService.subscribe(function(message) {
     console.log(message);
     if(message.from == "sys") {
-        $scope.alert.msg = message.msg;
-        //$scope.alerttype = message.type;
-        $scope.alert.type = 'alert alert-success';
-        $scope.$apply();
+        $timeout(function(){
+            $scope.alert.msg = message.msg;
+            $scope.alert.type = message.type;
+        });
     } else if(message.from == "userList") {
-        $scope.userList = message.userList;
-        $scope.$apply();
+        $timeout(function(){
+            $scope.userList = message.userList;
+        });
     } else {
         $scope.CreateBox(message.from);
         $('#'+message.from+' > .chatboxbody > .messages').append('<p><b>'+message.from+': </b>'+message.msg+'</p>').scrollTop(200000);
@@ -62,5 +63,6 @@ mainApp.controller('chatboxController', function($scope, $compile, ChatService, 
     UserService.isLogged = false;
     UserService.ws.close();
   }
+
 });
 

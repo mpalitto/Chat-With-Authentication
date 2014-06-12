@@ -7,7 +7,8 @@ module.exports = function(app, passport, sessionStore, server) {
 	// HOME PAGE (with login links) ========
 	// =====================================
 	app.get('/', function(req, res) {
-		res.render('index.ejs'); // load the index.ejs file
+            console.log('serving: /');
+            res.render('index.ejs'); // load the index.ejs file
 	});
 
 	// =====================================
@@ -15,6 +16,7 @@ module.exports = function(app, passport, sessionStore, server) {
 	// =====================================
 	// show the login form
 	app.get('/login', function(req, res) {
+            console.log('serving: /login');
             // render the page and pass in any flash data if it exists
             res.render('login.ejs', { message: req.flash('loginMessage') }); 
 	});
@@ -27,7 +29,7 @@ module.exports = function(app, passport, sessionStore, server) {
 	}), function(req, res) {
             //console.log(req);
             var username = req.user.local.username;
-            console.log(username + req.user.local);
+            //console.log(username + req.user.local);
             sendUserLists(req, res, sessionStore, server, username);
         });
 
@@ -56,6 +58,7 @@ module.exports = function(app, passport, sessionStore, server) {
 	// we will want this protected so you have to be logged in to visit
 	// we will use route middleware to verify this (the isLoggedIn function)
 	app.get('/profile', isLoggedIn, function(req, res) {
+            console.log('serving: /profile');
             res.render('profile.ejs', {
             	user : req.user // get the user out of session and pass to template
             });
@@ -65,6 +68,7 @@ module.exports = function(app, passport, sessionStore, server) {
 	// LOGOUT ==============================
 	// =====================================
 	app.get('/logout', function(req, res) {
+            console.log('serving: /logout');
             if (req.user) {
                 var username = req.user.local.username;
                 console.log(username + req.user.local);
@@ -114,6 +118,7 @@ module.exports = function(app, passport, sessionStore, server) {
         // SESSIONS PAGE =======================
         // =====================================
         app.get('/sessions', function(req, res) {
+            console.log('serving: /sessions');
             sessionStore.all(function(err, users) {
                var usernames = [];
                users.forEach(function(user){ username=JSON.parse(user).username; if(username) { usernames.push(username) } });
@@ -185,7 +190,10 @@ var partial = {
                 username = req.user.local.username;
                 sendUserLists(req, res, sessionStore, server, username);
             } else {
-                res.send([{ from: 'username', username: "" }]);
+                //res.send([{ from: 'username', username: "" }]);
+	        //res.redirect('/', '[{ from: "username", username: "" }]');
+                console.log('amIloggedIN: no user logged... redirecting'); 
+                res.redirect('/');
             }
 	});
 };
@@ -197,6 +205,7 @@ console.log(req.user);
 		return next();
 
 	// if they aren't redirect them to the home page
+	console.log('isAdmin: redirecting to /');
 	res.redirect('/');
 }
 // route middleware to make sure a user is logged in
@@ -207,39 +216,37 @@ function isLoggedIn(req, res, next) {
 		return next();
 
 	// if they aren't redirect them to the home page
+	console.log('isloggedIN: redirecting to /');
 	res.redirect('/');
 }
 
 function sendUserLists(req, res, sessionStore, server, username) {
-            sessionStore.all(function(err, loggedINusers) {
-                var userList = [];
-                var response = [];
-                console.log('username: '+username);
-                console.log(loggedINusers);
-                if(req.user != null) { //it is a login the user is not in the sessionStore yet
-                    userList = [ username ]; //add it to the list
-                    response.push({from: 'username', username: username});
-                }
-                loggedINusers.forEach(function(user){ var un=JSON.parse(user).username; if(un && un != username) { userList.push(un) } });
-                if(req.user == null) { //it is a logout the user is still in the sessionStore
-                    userList.splice(userList.indexOf(username), 1); //remove it from the list
-                }
-                response.push({ from: 'loggedINuserList', userList: userList });
-                console.log(response);
+    sessionStore.all(function(err, loggedINusers) {
+        var userList = [];
+        var response = [];
+        console.log(loggedINusers);
+        if(req.user != null) { //it is a login the user is not in the sessionStore yet
+            userList = [ username ]; //add it to the list
+            response.push({from: 'username', username: username});
+        }
+        loggedINusers.forEach(function(user){ var un=JSON.parse(user).username; if(un && un != username) { userList.push(un) } });
+        if(req.user == null) { //it is a logout the user is still in the sessionStore
+            userList.splice(userList.indexOf(username), 1); //remove it from the list
+        }
+        response.push({ from: 'loggedINuserList', userList: userList });
 
-                //broadcast new user list to all clients connected using websocket
-                server.connections.forEach(function(conn) {
-                    conn.sendText(JSON.stringify({ from: 'userList', userList: userList }));
-                });
+        //broadcast new user list to all clients connected using websocket
+        server.connections.forEach(function(conn) {
+            conn.sendText(JSON.stringify({ from: 'userList', userList: userList }));
+        });
 
-                userList = [];
-                mongoose.model('User').find(function(err, registeredUsers) {
-                   registeredUsers.forEach(function(user){ var username=user.local.username; if(username) { userList.push(username) } });
-                    console.log(userList);
-                    response.push({ from: 'registeredUserList', userList: userList });
-                    console.log(response);
+        userList = [];
+        mongoose.model('User').find(function(err, registeredUsers) {
+           registeredUsers.forEach(function(user){ var username=user.local.username; if(username) { userList.push(username) } });
+            response.push({ from: 'registeredUserList', userList: userList });
 
-                    res.send(response);
-                });
-            });
+            console.log(response);
+            res.send(response);
+        });
+    });
 }

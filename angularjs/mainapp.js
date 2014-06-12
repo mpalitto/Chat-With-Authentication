@@ -1,13 +1,14 @@
 var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
     .config(['$routeProvider', function($routeProvider){
-        $routeProvider.when('/login',{templateUrl: '/partials/login.ejs', public: true})
-                      .when('/signup',{templateUrl: '/partials/signup.ejs', public: true})
-                      .when('/auth',{templateUrl: '/partials/authentication.ejs', public: true})
-                      .when('/users',{templateUrl: '/partials/usersprofile.ejs', public: false})
-                      .when('/sessions',{templateUrl: '/partials/chatprofile.ejs', public: false})
-                      .otherwise({ redirectTo: '/auth'});
+        $routeProvider
+            .when('/login',{templateUrl: '/partials/login.ejs', public: true})
+            .when('/signup',{templateUrl: '/partials/signup.ejs', public: true})
+            .when('/auth',{templateUrl: '/partials/authentication.ejs', public: true})
+            .when('/users',{templateUrl: '/partials/usersprofile.ejs', public: false})
+            .when('/sessions',{templateUrl: '/partials/chatprofile.ejs', public: false})
+            .otherwise({ redirectTo: '/auth'});
     }])
-.run( function($rootScope, $http, $location, UserService, ChatService) {
+.run( function($rootScope, $http, $window, UserService, ChatService) {
     $http.get('/amIloggedIN').success(function(messages) {
         $.each(messages, function( i, message ) {
             console.log(message);
@@ -21,7 +22,8 @@ var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
                     UserService.isLogged = false;
                     UserService.username = "";
                     UserService.sendISlogged();
-                    window.location = '#/auth';
+                    //console.log('no user logged... redirecting');
+                    //$window.location.href = '/logout';
                 }
             } else if(message.from == "loggedINuserList") {
                 console.log(message.userList);

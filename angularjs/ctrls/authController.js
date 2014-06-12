@@ -1,4 +1,4 @@
-    function authController($scope, $http, UserService, ChatService) {
+    function authController($scope, $http, $window,  UserService, ChatService) {
         $scope.authData = {};
         $scope.submitAuth = function(type) {
             console.log($scope.authData);
@@ -27,10 +27,10 @@
                    ChatService.connect($scope.authData.username);
                    if( $scope.authData.username == 'admin') {
                        console.log('redirecting to admin panel');
-                       window.location = "#/users";
+                       $window.location.href = "#/users";
                    } else {
                        console.log('redirecting to chat panel');
-                       window.location = "#/sessions";
+                       $window.location.href = "#/sessions";
                    }
                 });
         };

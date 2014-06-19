@@ -185,16 +185,62 @@ var partial = {
         });
 
 	app.get('/amIloggedIN', function(req, res) {
+            console.log('am I logged IN?');
             var username = "";
             if(req.user) {
                 username = req.user.local.username;
+                console.log('amIloggedIN: logged as: '+username); 
                 sendUserLists(req, res, sessionStore, server, username);
             } else {
+                var response = [];
                 //res.send([{ from: 'username', username: "" }]);
 	        //res.redirect('/', '[{ from: "username", username: "" }]');
                 console.log('amIloggedIN: no user logged... redirecting'); 
-                res.redirect('/');
+                //res.redirect('/', '[{ username: "" }]');
+                //res.send('[{ from: "username", username: "" }]');
+                response.push({ from: 'username', username: '' });
+                res.send(response);
             }
+	});
+
+	app.get('/GetFileTree', function(req, res) {
+            console.log(req.query.dir);
+ 
+            var fs = require('fs');
+            var util = require('util');
+            var walk = function(branch, done) {
+              var dir = branch.id;
+              fs.readdir(dir, function(err, list) {
+                if (err) return done(err);
+                var pending = list.length;
+                if (!pending) return done(null, branch);
+                list.forEach(function(file) {
+                  var filename = file;
+                  file = dir + '/' + file;
+                  var ramus = {};
+                  fs.stat(file, function(err, stat) {
+                    if (stat && stat.isDirectory()) {
+                      ramus = { "name": filename, "id": file, "type": "branch", "children": [] };
+                      branch.children.push(ramus);
+                      walk(ramus, function(err, res) {
+                        //branch = branch.concat(res);
+                        if (!--pending) done(null, branch);
+                      });
+                    } else {
+                      ramus = { "name": filename, "id": file, "type": 'leaf', "children": [] };
+                      branch.children.push(ramus);
+                      if (!--pending) done(null, branch);
+                    }
+                  });
+                });
+              });
+            };
+            var tree = [ { "name": req.query.dir, "id": req.query.dir, "type": "branch", children: [] } ];
+            walk(tree[0], function(err, results) {
+              if (err) throw err;
+              console.log(util.inspect(tree, false, null));
+              res.send(tree);
+            });
 	});
 };
 
@@ -208,6 +254,7 @@ console.log(req.user);
 	console.log('isAdmin: redirecting to /');
 	res.redirect('/');
 }
+
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 

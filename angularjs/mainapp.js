@@ -1,4 +1,4 @@
-var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
+var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven', 'angularTreeview'])
     .config(['$routeProvider', function($routeProvider){
         $routeProvider
             .when('/login',{templateUrl: '/partials/login.ejs', public: true})
@@ -10,6 +10,7 @@ var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
     }])
 .run( function($rootScope, $http, $window, UserService, ChatService) {
     $http.get('/amIloggedIN').success(function(messages) {
+        console.log('messages: '+messages);
         $.each(messages, function( i, message ) {
             console.log(message);
             if(message.from == "username") {
@@ -23,7 +24,7 @@ var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven'])
                     UserService.username = "";
                     UserService.sendISlogged();
                     //console.log('no user logged... redirecting');
-                    //$window.location.href = '/logout';
+                    //$window.location.href = '#/auth';
                 }
             } else if(message.from == "loggedINuserList") {
                 console.log(message.userList);

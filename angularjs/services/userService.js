@@ -11,6 +11,7 @@ var heaven = angular.module('heaven', [])
     service.subscribe = function(callback) {
         service.callback = callback;
     }
+
     service.sendISlogged = function() {
         service.callback(service.isLogged);
     }

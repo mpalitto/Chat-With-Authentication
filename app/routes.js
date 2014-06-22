@@ -204,7 +204,7 @@ var partial = {
 	});
 
 	app.get('/GetFileTree', function(req, res) {
-            console.log(req.query.dir);
+            //console.log(req.query.dir);
  
             var fs = require('fs');
             var util = require('util');
@@ -238,10 +238,30 @@ var partial = {
             var tree = [ { "name": req.query.dir, "id": req.query.dir, "type": "branch", children: [] } ];
             walk(tree[0], function(err, results) {
               if (err) throw err;
-              console.log(util.inspect(tree, false, null));
+              //console.log(util.inspect(tree, false, null));
               res.send(tree);
             });
 	});
+
+        app.post('/fileUpload', function(req, res) {
+            //console.log(req.form);
+            // req.form.on('progress', function(bytesReceived, bytesExpected) {
+            //     console.log(((bytesReceived / bytesExpected)*100) + "% uploaded");
+            // });
+            //req.form.on('end', function() {
+                console.log("100% uploaded");
+                //console.log(req.files);
+                require('fs').rename(
+                    req.files.file.path,
+                    'Docs/uploaded/' + req.files.file.originalFilename,
+                     function(err) {
+                     if(err) { console.log(err); throw err };
+                     //console.log('successfull file renaming');
+                });
+                res.send(req.files.file.originalFilename);
+            //});
+        });
+
 };
 
 function isAdmin(req, res, next) {

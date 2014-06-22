@@ -1,4 +1,4 @@
-var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven', 'angularTreeview'])
+var mainApp = angular.module('mainApp', ['ngRoute', 'ui.bootstrap', 'heaven', 'angularTreeview', 'angularFileUpload', 'myFilters'])
     .config(['$routeProvider', function($routeProvider){
         $routeProvider
             .when('/login',{templateUrl: '/partials/login.ejs', public: true})

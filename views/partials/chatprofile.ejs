@@ -1,13 +1,35 @@
 <!-- views/partials/chatprofile.ejs -->
 <!doctype html>
+<script>
+var x = ['$scope', '$upload', '$http', 'DocsService', function ($scope, $upload, $http, DocsService) {
+            $scope.selectFile = function ($files) {
+                $scope.files = $files;
+                $scope.percent = 0;
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $upload.upload({
+                        url: '/fileUpload',
+                        file: file,
+                        progress: function (evt) { $scope.percent = ' : ' + parseInt(100.0 * evt.loaded / evt.total) + '%' }
+                    }).success(function (data, status, headers, config) {
+                        //console.log(data);
+                        $("#" + data.replace(/\./g,'').replace(/ /g,'')).remove();
+                        DocsService.updateTree($http).then(function() {
+                            DocsService.callback();
+                        });
+                    });
+                }
+            }
+        }];
+</script>
 <div class="container">
   <div ng-controller="docsController">
 
-    <div>
+    <!--div>
       <input type="button" value="TREE MODEL 1" data-ng-click="fileTree = roleList1" /> 
       <input type="button" value="TREE MODEL 2" data-ng-click="fileTree = roleList2" />
       <input type="button" value="FILE TREE" data-ng-click="fileTree = tree" />
-    </div>
+    </div-->
 
     <div style="margin:10px 0 30px 0; padding:10px; background-color:#EEEEEE; border-radius:5px; font:12px Tahoma;">
       <span><b>Selected Node</b> : {{abc.currentNode.id}}</span>
@@ -21,6 +43,14 @@
       node-label : each node's label
       node-children: each node's children
     -->
+    <table><tr><td valign="top">
+    <form id="form1" runat="server">
+    <div ng-controller="x">
+        <input type="file" ng-model="files" ng-file-select="selectFile($files)" multiple>
+        <div ng-repeat="file in files" id="{{file.name | nospace}}" class="filelist">{{file.name}}{{percent}}</div>
+    </div>
+    </form>
+    </td><td valign="top">
     <div
       data-angular-treeview="true"
       data-tree-id="abc"
@@ -29,6 +59,6 @@
       data-node-label="name"
       data-node-children="children" >
     </div>
-
+    </td></tr></table>
   </div>
 </div>

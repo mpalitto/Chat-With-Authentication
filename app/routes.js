@@ -262,6 +262,28 @@ var partial = {
             //});
         });
 
+	app.get('/moveFile', function(req, res) {
+            var fs = require('fs');
+            //console.log(req);
+            //console.log('item: '+req.query.item+' bin: '+req.query.bin+' fn: '+req.query.item.replace(/.*\//, ""));
+                require('fs').rename(
+                    req.query.item,
+                    req.query.bin + '/' + req.query.item.replace(/.*\//, ""),
+                     function(err) {
+                     if(err) { console.log(err); throw err };
+                     //console.log('successfull file renaming');
+                });
+
+            res.send('file has been moved');
+        });
+
+        app.get('/Docs/:file(*)', function(req, res, next) {
+          var file = req.params.file
+            //, path = __dirname + '/Docs/' + file;
+            , path = 'Docs/' + file;
+
+          res.download(path);
+        });
 };
 
 function isAdmin(req, res, next) {

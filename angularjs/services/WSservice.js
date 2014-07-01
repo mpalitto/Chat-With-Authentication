@@ -10,15 +10,15 @@ mainApp.factory('ChatService', function() {
  
     ws.onopen = function() {
       ws.send(username);
-      service.callback({from: 'sys', msg: 'connected', type: 'alert alert-success'});
+      service.callback({id: 'connection', from: 'sys', msg: 'connected', type: 'alert alert-success'});
     };
  
     ws.onclose = function() {
-      service.callback({from: 'sys', msg: 'connection closed', type: 'alert alert-danger'});
+      service.callback({id: 'connection', from: 'sys', msg: 'connection closed', type: 'alert alert-danger'});
     };
  
     ws.onerror = function() {
-      service.callback({from: 'sys', msg: 'Failed to open a connection', type: 'alert alert-danger'});
+      service.callback({id: 'connection', from: 'sys', msg: 'Failed to open a connection', type: 'alert alert-danger'});
     }
  
     ws.onmessage = function(message) {

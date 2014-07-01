@@ -6,6 +6,7 @@ mainApp.controller('chatboxController', function($timeout, $scope, $compile, Cha
   $scope.alert.msg = 'not connected';
   $scope.isLogged = false;
   $scope.username = "";
+  $scope.alert.showRefresh = false;
 
   //$scope.$watch('userList', function(){console.log('loggedINusers Change detected: '+ $scope.userList)});
   $scope.closeBox = function(chatboxID){
@@ -35,6 +36,8 @@ mainApp.controller('chatboxController', function($timeout, $scope, $compile, Cha
         $timeout(function(){
             $scope.alert.msg = message.msg;
             $scope.alert.type = message.type;
+            $scope.alert.id = message.id;
+            if(message.id == 'refresh') $scope.alert.showRefresh = true;
         });
     } else if(message.from == "userList") {
         $timeout(function(){

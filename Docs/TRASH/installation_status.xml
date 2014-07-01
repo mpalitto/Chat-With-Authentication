@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<install_log version="22.0.1471.70" copy_only="False" all_users="True" pinned="False" app_id="1396137303">
+ <path subfolder="22.0.1471.70">C:\Program Files (x86)\Opera</path>
+ <files>
+  <file>opera_150_percent.pak</file>
+  <file>icudtl.dat</file>
+  <file>opera_autoupdate.exe</file>
+  <file>d3dcompiler_46.dll</file>
+  <file>ffmpegsumo.dll</file>
+  <file>launcher_lib.dll</file>
+  <file>libEGL.dll</file>
+  <file>libGLESv2.dll</file>
+  <file>msvcp100.dll</file>
+  <file>msvcr100.dll</file>
+  <file>osmesa.dll</file>
+  <file>win8_importing.dll</file>
+  <file>wow_helper.exe</file>
+  <file>opera.pak</file>
+  <file>installer.exe</file>
+  <file>opera_autoupdate.licenses</file>
+  <file>resources\dictionaries.xml</file>
+  <file>resources\default_partner_content.json</file>
+  <file>resources\013E742B-287B-4228-A0B9-BD617E4E02A4.ico</file>
+  <file>resources\07593226-C5C5-438B-86BE-3F6361CD5B10.ico</file>
+  <file>resources\0CD5F3A0-8BF6-11E2-9E96-0800200C9A66.ico</file>
+  <file>resources\1AF2CDD0-8BF3-11E2-9E96-0800200C9A66.ico</file>
+  <file>resources\1CF37043-6733-479C-9086-7B21A2292DDA.ico</file>
+  <file>resources\2A3F5C20-8BF5-11E2-9E96-0800200C9A66.ico</file>
+  <file>resources\2F8F0E41-F521-45A4-9691-F664AFAFE67F.ico</file>
+  <file>resources\3B6191A0-8BF3-11E2-9E96-0800200C9A66.ico</file>
+  <file>resources\5BBBDD5B-EDC7-4168-9F5D-290AF826E716.ico</file>
+  <file>resources\66DD4BB6-A3BA-4B11-AF7A-F4BF23E073B2.ico</file>
+  <file>resources\6D3582E1-6013-429F-BB34-C75B90CDD1F8.ico</file>
+  <file>resources\76C397A8-9E8E-4706-8203-BD2878E9C618.ico</file>
+  <file>resources\8D754F20-8BF5-11E2-9E96-0800200C9A66.ico</file>
+  <file>resources\AD2FD2BD-0727-4AF7-8917-AAED8627ED47.ico</file>
+  <file>resources\C665D993-1B49-4C2E-962C-BEB19993BB86.ico</file>
+  <file>resources\CCCED631-6DA2-4060-9824-95737E64350C.ico</file>
+  <file>resources\CFCE84E5-9A95-4B3F-B8E4-3E98CF7EE6C5.ico</file>
+  <file>resources\CFD4BE41-4C6D-496A-ADDB-4095DFA1DD0E.ico</file>
+  <file>resources\F3F34CBB-24FF-4830-9E87-1663E7A0A5EE.ico</file>
+  <file>resources\F98D4D4C-8AA7-4619-A1E7-AC89B24558DD.ico</file>
+  <file>resources\FDC2CCAB-E8F9-4620-91DD-B0B67285997C.ico</file>
+  <file>resources\FF57F01A-0718-44B7-8A1F-8B15BC33A50B.ico</file>
+  <file>opera_100_percent.pak</file>
+  <file>opera_200_percent.pak</file>
+  <file>opera.exe</file>
+  <file>opera_autoupdate.version</file>
+  <file>opera_125_percent.pak</file>
+  <file>resources\license.txt</file>
+  <file>localization\af.pak</file>
+  <file>localization\ar.pak</file>
+  <file>localization\az.pak</file>
+  <file>localization\be.pak</file>
+  <file>localization\bg.pak</file>
+  <file>localization\bn.pak</file>
+  <file>localization\ca.pak</file>
+  <file>localization\cs.pak</file>
+  <file>localization\da.pak</file>
+  <file>localization\de.pak</file>
+  <file>localization\el.pak</file>
+  <file>localization\en-GB.pak</file>
+  <file>localization\en-US.pak</file>
+  <file>localization\es-419.pak</file>
+  <file>localization\es.pak</file>
+  <file>localization\fi.pak</file>
+  <file>localization\fr-CA.pak</file>
+  <file>localization\fr.pak</file>
+  <file>localization\fy.pak</file>
+  <file>localization\gd.pak</file>
+  <file>localization\hi.pak</file>
+  <file>localization\hr.pak</file>
+  <file>localization\hu.pak</file>
+  <file>localization\id.pak</file>
+  <file>localization\it.pak</file>
+  <file>localization\ja.pak</file>
+  <file>localization\kk.pak</file>
+  <file>localization\ko.pak</file>
+  <file>localization\lt.pak</file>
+  <file>localization\lv.pak</file>
+  <file>localization\me.pak</file>
+  <file>localization\mk.pak</file>
+  <file>localization\ms.pak</file>
+  <file>localization\nb.pak</file>
+  <file>localization\nl.pak</file>
+  <file>localization\nn.pak</file>
+  <file>localization\pa.pak</file>
+  <file>localization\pl.pak</file>
+  <file>localization\pt-BR.pak</file>
+  <file>localization\pt-PT.pak</file>
+  <file>localization\ro.pak</file>
+  <file>localization\ru.pak</file>
+  <file>localization\sk.pak</file>
+  <file>localization\sr.pak</file>
+  <file>localization\sv.pak</file>
+  <file>localization\sw.pak</file>
+  <file>localization\ta.pak</file>
+  <file>localization\te.pak</file>
+  <file>localization\th.pak</file>
+  <file>localization\tl.pak</file>
+  <file>localization\tr.pak</file>
+  <file>localization\uk.pak</file>
+  <file>localization\uz.pak</file>
+  <file>localization\vi.pak</file>
+  <file>localization\zh-CN.pak</file>
+  <file>localization\zh-TW.pak</file>
+  <file>localization\zu.pak</file>
+  <file>opera_crashreporter.exe</file>
+ </files>
+ <registry hive="HKLM">
+  <key path="Software\Classes\OperaStable" clean="1">
+   <value name="FriendlyTypeName" type="REG_SZ">Opera Web Document</value>
+   <value name="URL Protocol" type="REG_SZ"></value>
+  </key>
+  <key path="Software\Classes\OperaStable\DefaultIcon" clean="1">
+   <value name="" type="REG_SZ">C:\Program Files (x86)\Opera\Launcher.exe,0</value>
+  </key>
+  <key path="Software\Classes\OperaStable\shell\open\command" clean="2">
+   <value name="" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot; -noautoupdate &quot;%1&quot;</value>
+  </key>
+  <key path="Software\Classes\.oex" clean="1">
+   <value name="" type="REG_SZ">OperaStable.Extension</value>
+  </key>
+  <key path="Software\Classes\.oex\OpenWithProgIDs" clean="1">
+   <value name="OperaStable" type="REG_NONE"></value>
+  </key>
+  <key path="Software\Classes\.htm\OpenWithProgIDs" clean="0">
+   <value name="OperaStable" type="REG_NONE"></value>
+  </key>
+  <key path="Software\Classes\.html\OpenWithProgIDs" clean="0">
+   <value name="OperaStable" type="REG_NONE"></value>
+  </key>
+  <key path="Software\Classes\.shtml\OpenWithProgIDs" clean="0">
+   <value name="OperaStable" type="REG_NONE"></value>
+  </key>
+  <key path="Software\Classes\.xht\OpenWithProgIDs" clean="0">
+   <value name="OperaStable" type="REG_NONE"></value>
+  </key>
+  <key path="Software\Classes\.xhtml\OpenWithProgIDs" clean="0">
+   <value name="OperaStable" type="REG_NONE"></value>
+  </key>
+  <key path="Software\Classes\Applications\Opera.exe\shell\open\command" clean="4">
+   <value name="" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot; &quot;%1&quot;</value>
+  </key>
+  <key path="Software\Microsoft\Windows\CurrentVersion\App Paths\Opera.exe" clean="0">
+   <value name="" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot;</value>
+   <value name="Path" type="REG_SZ">&quot;C:\Program Files (x86)\Opera&quot;</value>
+  </key>
+  <key path="Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant\Persisted" clean="0">
+   <value name="C:\Program Files (x86)\Opera\Launcher.exe" type="REG_DWORD">00000020</value>
+  </key>
+  <key path="Software\RegisteredApplications" clean="0">
+   <value name="Opera Stable" type="REG_SZ">Software\Clients\StartMenuInternet\OperaStable\Capabilities</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable" clean="1">
+   <value name="" type="REG_SZ">Opera Stable</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\DefaultIcon" clean="1">
+   <value name="" type="REG_SZ">C:\Program Files (x86)\Opera\Launcher.exe,0</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\InstallInfo" clean="1">
+   <value name="ShowIconsCommand" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot; --showicons</value>
+   <value name="HideIconsCommand" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot; --hideicons</value>
+   <value name="ReinstallCommand" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot; --makedefaultbrowser</value>
+   <value name="IconsVisible" type="REG_DWORD">00000001</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\shell\open\command" clean="2">
+   <value name="" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot;</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\Capabilities" clean="1">
+   <value name="ApplicationDescription" type="REG_SZ">The Best Internet Experience on any device</value>
+   <value name="ApplicationIcon" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot;,0</value>
+   <value name="ApplicationName" type="REG_SZ">Opera Stable</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\Capabilities\FileAssociations" clean="1">
+   <value name=".crx" type="REG_SZ">OperaStable</value>
+   <value name=".htm" type="REG_SZ">OperaStable</value>
+   <value name=".html" type="REG_SZ">OperaStable</value>
+   <value name=".nex" type="REG_SZ">OperaStable</value>
+   <value name=".shtml" type="REG_SZ">OperaStable</value>
+   <value name=".xht" type="REG_SZ">OperaStable</value>
+   <value name=".xhtml" type="REG_SZ">OperaStable</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\Capabilities\Startmenu" clean="1">
+   <value name="StartMenuInternet" type="REG_SZ">OperaStable</value>
+  </key>
+  <key path="Software\Clients\StartMenuInternet\OperaStable\Capabilities\UrlAssociations" clean="1">
+   <value name="http" type="REG_SZ">OperaStable</value>
+   <value name="https" type="REG_SZ">OperaStable</value>
+   <value name="ftp" type="REG_SZ">OperaStable</value>
+  </key>
+  <key path="Software\Microsoft\Windows\CurrentVersion\Uninstall\Opera 22.0.1471.70" clean="1">
+   <value name="DisplayName" type="REG_SZ">Opera Stable 22.0.1471.70</value>
+   <value name="DisplayIcon" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot;,0</value>
+   <value name="DisplayVersion" type="REG_SZ">22.0.1471.70</value>
+   <value name="HelpLink" type="REG_SZ">http://www.opera.com/support</value>
+   <value name="InstallLocation" type="REG_SZ">C:\Program Files (x86)\Opera</value>
+   <value name="NoModify" type="REG_DWORD">00000001</value>
+   <value name="NoRepair" type="REG_DWORD">00000001</value>
+   <value name="Publisher" type="REG_SZ">Opera Software ASA</value>
+   <value name="UninstallString" type="REG_SZ">&quot;C:\Program Files (x86)\Opera\Launcher.exe&quot; /uninstall</value>
+   <value name="URLInfoAbout" type="REG_SZ">http://www.opera.com</value>
+   <value name="URLUpdateInfo" type="REG_SZ">http://www.opera.com/download</value>
+  </key>
+ </registry>
+ <shortcut type="SC_DEST_COMMON_DESKTOP">C:\Users\Public\Desktop\Opera.lnk</shortcut>
+ <shortcut type="SC_DEST_COMMON_MENU">C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Opera.lnk</shortcut>
+</install_log>

@@ -55,9 +55,11 @@
                             '<div class="bin" droppable drop="handleDrop" bin="bin" id="{{node.' + nodeId + '}}" data-ng-show="node.' + nodeType  + ' == \'branch\'">' +
                                 '<i class="collapsed" data-ng-show="node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                                 '<i class="expanded" data-ng-show="!node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
-                                '<span data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}}</span></div>' +
-                            '<a href="/{{node.' + nodeId + '}}" class="item" draggable item="item" id="{{node.' + nodeId + '}}" data-ng-hide="node.' + nodeType + ' != \'leaf\'"> ' +
-                            '<i class="normal"></i> {{node.' + nodeLabel + '}}</a>' +
+                                '<span data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">{{node.' + nodeLabel + '}}</span>' +
+                            '</div>' +
+                            //'<a href="/{{node.' + nodeId + '}}" class="item" draggable item="item" id="{{node.' + nodeId + '}}" data-ng-hide="node.' + nodeType + ' != \'leaf\'"> ' +
+                            '<span  data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)" class="item" draggable item="item" id="{{node.' + nodeId + '}}" data-ng-hide="node.' + nodeType + ' != \'leaf\'"> ' +
+                            '<i class="normal"></i> {{node.' + nodeLabel + '}}</span>' +
                             '<div data-ng-hide="node.collapsed" data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id=' + nodeId + ' data-node-label=' + nodeLabel + ' data-node-children=' + nodeChildren + '></div>' +
                         '</li>' +
                     '</ul>';

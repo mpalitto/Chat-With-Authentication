@@ -1,24 +1,44 @@
 <!-- views/partials/chatprofile.ejs -->
 <!doctype html>
 <script>
-var x = ['$scope', '$upload', '$http', 'DocsService', function ($scope, $upload, $http, DocsService) {
+var uploadCtrl = ['$scope', '$upload', '$http', 'DocsService', function ($scope, $upload, $http, DocsService) {
     $scope.selectFile = function ($files) {
+        console.log('slected files: '+$files);
         $scope.files = $files;
         $scope.percent = 0;
-        for (var i = 0; i < $files.length; i++) {
-            var file = $files[i];
-            $upload.upload({
-                url: '/fileUpload',
-                file: file,
-                progress: function (evt) { $scope.percent = ' : ' + parseInt(100.0 * evt.loaded / evt.total) + '%' }
-            }).success(function (data, status, headers, config) {
-                //console.log(data);
-                $("#" + data.replace(/\./g,'').replace(/ /g,'')).remove();
-                DocsService.updateTree($http).then(function() {
-                    DocsService.callback();
+        $http({
+            url: '/checkFilesPermission',
+            method: "GET",
+            cache: false,
+            params: $files
+        }).success(function(data, status, headers, config) {
+            console.log(data);
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                console.log(file);
+                if(data[i].action == 'confirm') { 
+                    if(! confirm('confirm overwrite: '+ data[i].filename)) {
+                        $("#" + file.name.replace(/\./g,'').replace(/ /g,'')).remove();
+                        continue; 
+                    }
+                } else if(data[i].action != 'allow') { 
+                    alert("ERROR: you don't have permission for:" + file.name + ' file found in: '+data[i].filename+' owner: ' + data[i].owner); 
+                    $("#" + file.name.replace(/\./g,'').replace(/ /g,'')).remove();
+                    continue; 
+                }
+                $upload.upload({
+                    url: '/fileUpload',
+                    file: file,
+                    progress: function (evt) { $scope.percent = ' : ' + parseInt(100.0 * evt.loaded / evt.total) + '%' }
+                }).success(function (data, status, headers, config) {
+                    console.log(data);
+                    $("#" + data.replace(/\./g,'').replace(/ /g,'')).remove();
+                    DocsService.updateTree($http).then(function() {
+                        DocsService.callback();
+                    });
                 });
-            });
-        }
+            }
+        });
     }
 }];
 
@@ -26,47 +46,83 @@ var dragNdropCtrl = ['$scope', '$http', 'DocsService', function($scope, $http, D
     $scope.handleDrop = function(item, bin) {
         console.log('Item:' + item +  ' has been dropped in: ' + bin);
         $http({
-            url: '/moveFile',
+            url: '/checkFilesPermission',
             method: "GET",
-            params: { 'item': item, 'bin': bin }
+            cache: false,
+            params: { 0: '{ "name": "'+ item+'"}' } 
         }).success(function(data, status, headers, config) {
-            DocsService.updateTree($http).then(function() {
-                DocsService.callback();
-            });
-        });
+            console.log(data);
+            if(data[0].move == 'allow') {
+                $http({
+                    url: '/moveFile',
+                    method: "GET",
+                    params: { 'item': item, 'bin': bin }
+                }).success(function(data, status, headers, config) {
+                    DocsService.updateTree($http).then(function() {
+                        DocsService.callback();
+                    });
+                });
+            } else {
+                alert("Error: you don't have permissions for: " + item + "OWNER is: " + data[0].owner);
+            }
+        })
     }
 }];
+
+        function usersCtrl($scope, $http, UserService, DocsService) {
+            $scope.users = UserService.users;
+            $scope.selectedFile = "test";
+            $scope.updateDetails = function() {
+                if($scope.newowner) {
+                    $http({
+                        url: '/fileCHOWN',
+                        method: 'GET',
+                        //params: { file: $('#detailsForm').attr('file'), newowner: $scope.newowner }
+                        params: { file: $scope.$parent.abc.currentNode.name, newowner: $scope.newowner }
+                    }).success(function(result, status, header, config) {
+                        console.log(result);
+                        $scope.$parent.fileOwner = $scope.newowner;
+                        if(UserService.username != 'admin' && UserService.username != $scope.newowner)
+                            $scope.$parent.showDetails = false;
+                    });
+                } else {
+                    alert('Please select a new owner for the file');
+                }
+            }
+        }
+
 </script>
-<div class="container">
+<div class="container" ng-controller="dragNdropCtrl">
   <div ng-controller="docsController">
-
-    <!--div>
-      <input type="button" value="TREE MODEL 1" data-ng-click="fileTree = roleList1" /> 
-      <input type="button" value="TREE MODEL 2" data-ng-click="fileTree = roleList2" />
-      <input type="button" value="FILE TREE" data-ng-click="fileTree = tree" />
-    </div-->
-
-    <div style="margin:10px 0 30px 0; padding:10px; background-color:#EEEEEE; border-radius:5px; font:12px Tahoma;">
-      <span><b>Selected Node</b> : {{abc.currentNode.id}}</span>
+    <div ng-show="!$parent.$parent.alert.showRefresh" style="height: 50px; margin:10px 0 30px 0; padding:10px; background-color:#EEEEEE; border-radius:5px; font:12px Tahoma;">
+       <div ng-show="showDownload"> <a href="{{filePath}}" class="btn btn-info">Download</a>
+      <span><b>Selected</b>: {{abc.currentNode.id}}</span></div>
+    </div>
+    <div ng-show="$parent.$parent.alert.showRefresh" style="height: 50px; margin:10px 0 30px 0; padding:10px; background-color:#F2DEDE; border-radius:5px; font:12px Tahoma;">
+       <div ng-click="updateTree()" class="btn btn-info">Refresh</div>
+      <span><b>File Tree</b></span>
     </div>
 
-    <!--
-      [TREE attribute]
-      angular-treeview: the treeview directive
-      tree-model : the tree model on $scope.
-      node-id : each node's id
-      node-label : each node's label
-      node-children: each node's children
-    -->
-    <div ng-controller="dragNdropCtrl">
-        <table><tr><td valign="top">
+    <table><tr><td valign="top">
         <form id="form1" runat="server">
-        <div ng-controller="x">
-            <input type="file" ng-model="files" ng-file-select="selectFile($files)" multiple>
-            <div ng-repeat="file in files" id="{{file.name | nospace}}" class="filelist">{{file.name}}{{percent}}</div>
-        </div>
+            <div ng-controller="uploadCtrl" style="background-color: #EEEEEE; margin: 10px; padding: 10px" class="img-rounded">
+                <b>Upload:</b>
+                <input type="file" ng-model="files" ng-file-select="selectFile($files)" multiple>
+                <div ng-repeat="file in files" id="{{file.name | nospace}}" class="filelist">{{file.name}}{{percent}}</div>
+            </div>
         </form>
-        </td><td valign="top">
+        <div style="background-color: LightBlue; margin: 10px; padding: 10px" ng-show="showDownload" class="img-rounded">
+            <b>{{abc.currentNode.name}}: </b>
+            </br>Owner: <b>{{fileOwner}}</b>
+            <div id="detailsForm" ng-show="showDetails" ng-controller="usersCtrl" file='{{abc.currentNode.name}}'>
+                assign new owner:
+                <select ng-model="newowner" ng-options="user for user in users"><option value="">-- choose --</option></select>
+                <button type="submit" ng-click="updateDetails()" value="Apply" ng-model="showDownload">Apply</button>
+                <div><b>Previous Versions:</b></div>
+                <div id="versions"></div>
+            </div>
+        </div>
+    </td><td valign="top">
         <div
           data-angular-treeview="true"
           data-tree-id="abc"
@@ -75,7 +131,6 @@ var dragNdropCtrl = ['$scope', '$http', 'DocsService', function($scope, $http, D
           data-node-label="name"
           data-node-children="children" >
         </div>
-        </td></tr></table>
-    </div>
+    </td></tr></table>
   </div>
 </div>

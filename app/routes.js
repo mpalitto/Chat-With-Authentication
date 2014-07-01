@@ -203,84 +203,271 @@ var partial = {
             }
 	});
 
-	app.get('/GetFileTree', function(req, res) {
-            //console.log(req.query.dir);
- 
-            var fs = require('fs');
-            var util = require('util');
-            var walk = function(branch, done) {
-              var dir = branch.id;
-              fs.readdir(dir, function(err, list) {
-                if (err) return done(err);
-                var pending = list.length;
-                if (!pending) return done(null, branch);
-                list.forEach(function(file) {
-                  var filename = file;
-                  file = dir + '/' + file;
-                  var ramus = {};
-                  fs.stat(file, function(err, stat) {
-                    if (stat && stat.isDirectory()) {
-                      ramus = { "name": filename, "id": file, "type": "branch", "children": [] };
-                      branch.children.push(ramus);
-                      walk(ramus, function(err, res) {
-                        //branch = branch.concat(res);
-                        if (!--pending) done(null, branch);
-                      });
-                    } else {
-                      ramus = { "name": filename, "id": file, "type": 'leaf', "children": [] };
-                      branch.children.push(ramus);
+    //options: {lookFor: filename}
+    var fileTree = function(dir, options, callback) {
+        var fs = require('fs');
+        var util = require('util');
+        var walk = function(branch, done) {
+            var dir = branch.id;
+            fs.readdir(dir, function(err, list) {
+              if (err) return done(err);
+              var pending = list.length;
+              if (!pending) return done(null, branch);
+              list.forEach(function(file) {
+                var filename = file;
+                file = dir + '/' + file;
+                if(options) console.log(filename+' : '+options.lookFor);
+                if(options && filename == options.lookFor) {
+                    console.log('found file: '+file);
+                    callback(file);
+                    return file;
+                };
+                var ramus = {};
+                fs.stat(file, function(err, stat) {
+                  if (stat && stat.isDirectory()) {
+                    ramus = { "name": filename, "id": file, "type": "branch", "children": [] };
+                    branch.children.push(ramus);
+                    walk(ramus, function(err, res) {
+                      //branch = branch.concat(res);
                       if (!--pending) done(null, branch);
-                    }
-                  });
+                    });
+                  } else {
+                    ramus = { "name": filename, "id": file, "type": 'leaf', "children": [] };
+                    branch.children.push(ramus);
+                    if (!--pending) done(null, branch);
+                  }
                 });
               });
-            };
-            var tree = [ { "name": req.query.dir, "id": req.query.dir, "type": "branch", children: [] } ];
-            walk(tree[0], function(err, results) {
-              if (err) throw err;
+            });
+        };
+        var tree = [ { "name": dir, "id": dir, "type": "branch", children: [] } ];
+        walk(tree[0], function(err, results) {
+          if (err) throw err;
+          if(options) { console.log('file not found'); callback(null) }
+          else {
+              //console.log("tree:");
               //console.log(util.inspect(tree, false, null));
-              res.send(tree);
+              callback(tree);
+          };
+        });
+    };
+
+	app.get('/GetFileTree', function(req, res) {
+
+            //console.log(req.query.dir);
+            fileTree(req.query.dir, null, function(tree) {
+                //var util = require('util');
+                //console.log("tree2:");
+                //console.log(util.inspect(tree, false, null));
+                res.send(tree);
             });
 	});
 
-        app.post('/fileUpload', function(req, res) {
-            //console.log(req.form);
-            // req.form.on('progress', function(bytesReceived, bytesExpected) {
-            //     console.log(((bytesReceived / bytesExpected)*100) + "% uploaded");
-            // });
-            //req.form.on('end', function() {
-                console.log("100% uploaded");
-                //console.log(req.files);
-                require('fs').rename(
-                    req.files.file.path,
-                    'Docs/uploaded/' + req.files.file.originalFilename,
-                     function(err) {
-                     if(err) { console.log(err); throw err };
-                     //console.log('successfull file renaming');
+	app.get('/listPreviousVersions', function(req, res) {
+            //console.log(req.query.dir);
+            if(require('fs').existsSync(req.query.dir)) {
+                fileTree(req.query.dir, null, function(tree) {
+                    res.send(tree[0].children);
                 });
-                res.send(req.files.file.originalFilename);
-            //});
+            } else {
+                res.send([]);
+            }
+	});
+
+        var filePermissions = JSON.parse(require('fs').readFileSync('filePermissions.json', 'utf8'));
+        // {
+        //     APNSetupexe: { download: { admin: 'allow', Matteo: 'allow' }, owner: { Matteo: 'allow' } },
+        //     BILANCINODESERTDISIDRATANTIpdf: { download: { all: 'isLogged' }, owner: { Desert: 'allow' } },
+        //     Diariotxt: { download: { all: 'allow' }, owner: { new: 'allow' } },
+        //     jquery183minjs: { download: { all: 'allow' }, owner: { all: 'allow' } }
+        // };
+
+        app.get('/checkFilesPermission', function(req, res) {
+            //console.log(req.query);
+            var permissions = [];
+            var k = [];
+            for ( key in req.query ) { k.push(key); };
+            console.log(k);
+            function checkPermission(key) {
+                var filename = "";
+                var owner = "";
+                var fn = "";
+                if( key < k.length ) {
+                    console.log(req.query);
+                    console.log(req.query[key]);
+                    filename = JSON.parse(req.query[key]).name;
+                    fn = filename.replace(/.*\//,'').replace(/\./g,'').replace(/ /g,'').replace(/-/g,'');
+                    if( filePermissions[fn] !== undefined ) {
+                        owner = Object.keys(filePermissions[fn]['owner'])[0];
+                    } else {
+                        owner = req.user.local.username;
+                        filePermissions[fn] = { "download": { "all": "allow" }, "owner": {} };
+                        filePermissions[fn]['owner'][owner] = 'allow';
+                        require('fs').writeFile('filePermissions.json', JSON.stringify(filePermissions));
+                    }
+                    console.log('fn: '+fn);
+                    fileTree('Docs', { lookFor: filename }, function(file) {
+                        if(file) {
+                            //fn = file.replace(/.*\//,'').replace(/\./g,'').replace(/ /g,'').replace(/-/g,'');
+                            console.log('fn: '+fn+'user: '+req.user.local.username+' : '+filePermissions[fn]['owner'][req.user.local.username]);
+                            if(req.user.local.username == 'admin' || filePermissions[fn]['owner'][req.user.local.username] == 'allow') {
+                                //file has been found and ownership has been verified
+                                permissions.push({ filename: file, action: 'confirm', owner: owner, move: 'allow'});
+                            } else {
+                                //file has been found and ownership has NOT been verified
+                                permissions.push({ filename: file, action: 'deny', owner: owner, move: 'deny'});
+                            }
+                        } else {
+                            if(req.user.local.username == 'admin' || filePermissions[fn]['owner'][req.user.local.username] == 'allow') {
+                           //file has NOT been found: its a new file
+                                permissions.push({ filename: filename, action: 'allow', owner: owner, move: 'allow'});
+                            } else {
+                                permissions.push({ filename: filename, action: 'allow', owner: owner, move: 'deny'});
+                            }
+                        };
+                        console.log('key: '+key);
+                        console.log(permissions);
+                        if( key == k.length - 1 ) {
+                            res.send(permissions);
+                        }
+                    });
+                    checkPermission( key + 1 );
+                }
+            };
+            checkPermission(0);
+        });
+
+        app.post('/fileUpload', function(req, res) {
+            console.log("100% uploaded");
+            var fs = require('fs');
+            var mkdirp = require("mkdirp");
+            var path = '';
+            console.log(req.user.local.username);
+            var username = req.user.local.username;
+            fileTree('Docs', { lookFor: req.files.file.originalFilename }, function(file) {
+                if(file) {
+                    fn = file.replace(/.*\//,''); 
+                    fs.stat(file, function(err, stats){
+                        //console.log(stats.ctime.toISOString());
+                        fn = stats.ctime.toISOString() + '_' + fn;
+                    });
+                    path = 'versionedDocs/' + file
+                    console.log('making dir: ' + path);
+                    mkdirp(path, function(err) { 
+                        if(err) console.error(err)
+                        else {
+                            console.log("made dir: "+ path)
+                            fs.rename(
+                                file,
+                                path + '/' + fn,
+                                function(err) {
+                                    if(err) { 
+                                        console.log(err); 
+                                        throw err;
+                                    } else {
+                                        console.log('moving: '+req.files.file.path+' --> '+file);
+                                        fs.rename(
+                                            req.files.file.path,
+                                            file,
+                                            function(err) {
+                                                if(err) { console.log(err); throw err };
+                                                //console.log('successfull file renaming');
+                                                res.send(req.files.file.originalFilename);
+                                            }
+                                        );
+                                    };
+                                    //console.log('successfull file renaming');
+                                }
+                            );
+                        }
+                    });
+                } else {
+                    var filename =  req.files.file.originalFilename.replace(/.*\//,'');
+                    fn = filename.replace(/\./g,'').replace(/ /g,'').replace(/-/g,'');
+                    filePermissions[fn] = { "download": { "all": "allow" }, "owner": {} };
+                    filePermissions[fn]['owner'][username] = 'allow';
+                    fs.writeFile('filePermissions.json', JSON.stringify(filePermissions));
+                    path = 'versionedDocs/Docs/uploaded/' + filename;
+                    mkdirp(path, function(err) { if(err) console.error(err) });
+                    fs.rename(
+                        req.files.file.path,
+                        'Docs/uploaded/' + req.files.file.originalFilename,
+                        function(err) {
+                            if(err) { console.log(err); throw err };
+                            server.connections.forEach(function(conn) {
+                                if(conn.nickname != req.user.local.username)
+                                    conn.sendText(JSON.stringify({id: "refresh", from: 'sys', msg: 'file Tree is out of synch, please refresh your file Tree.', type: 'alert alert-danger'}));
+                            });
+                            res.send(req.files.file.originalFilename);
+                            //console.log('successfull file renaming');
+                        }
+                    );
+                }
+            });
+        });
+
+	app.get('/fileCHOWN', function(req, res) {
+            console.log(req.query);
+            var filename = req.query.file;
+            var fn = filename.replace(/\./g,'').replace(/ /g,'').replace(/-/g,'');
+            if(req.user.local.username == 'admin' || filePermissions[fn]['owner'][req.user.local.username] == 'allow') {
+                    filePermissions[fn]['owner'] = {};
+                    filePermissions[fn]['owner'][req.query.newowner] = 'allow';
+                    require('fs').writeFile('filePermissions.json', JSON.stringify(filePermissions));
+            };
+            server.connections.forEach(function(conn) {
+                if(conn.nickname != req.user.local.username)
+                    conn.sendText(JSON.stringify({id: "refresh", from: 'sys', msg: 'file Tree is out of synch, please refresh your file Tree.', type: 'alert alert-danger'}));
+            });
+            res.send('owner has been updated: '+req.query.newowner);
         });
 
 	app.get('/moveFile', function(req, res) {
-            var fs = require('fs');
             //console.log(req);
-            //console.log('item: '+req.query.item+' bin: '+req.query.bin+' fn: '+req.query.item.replace(/.*\//, ""));
-                require('fs').rename(
+            var filename = req.query.item.replace(/.*\//, "");
+            var destFilename = req.query.bin + '/' + filename;
+            var fn = filename.replace(/\./g,'').replace(/ /g,'').replace(/-/g,'');
+            var fs = require('fs');
+            //console.log('item: '+req.query.item+' bin: '+req.query.bin+' fn: '+filename);
+            if(req.user.local.username == 'admin' || filePermissions[fn]['owner'][req.user.local.username] == 'allow') {
+                if(fs.existsSync('versionedDocs/'+req.query.item)) {
+                    fs.rename(
+                        'versionedDocs/'+req.query.item,
+                        'versionedDocs/'+destFilename,
+                        function(err) {
+                            if(err) { console.log(err); throw err };
+                            //console.log('successfull file renaming');
+                        }
+                    );
+                };
+                fs.rename(
                     req.query.item,
-                    req.query.bin + '/' + req.query.item.replace(/.*\//, ""),
-                     function(err) {
-                     if(err) { console.log(err); throw err };
-                     //console.log('successfull file renaming');
-                });
-
-            res.send('file has been moved');
+                    destFilename,
+                    function(err) {
+                        if(err) { console.log(err); throw err };
+                        res.send('file has been moved');
+                            //console.log(server.connections);
+                        server.connections.forEach(function(conn) {
+                            if(conn.nickname != req.user.local.username)
+                                conn.sendText(JSON.stringify({id: "refresh", from: 'sys', msg: 'file Tree is out of synch, please refresh your file Tree.', type: 'alert alert-danger'}));
+                        });
+                        //console.log('successfull file renaming');
+                    }
+                );
+            } else { res.send('move not allowed') }
         });
 
         app.get('/Docs/:file(*)', function(req, res, next) {
           var file = req.params.file
             //, path = __dirname + '/Docs/' + file;
             , path = 'Docs/' + file;
+
+          res.download(path);
+        });
+        app.get('/versionedDocs/:file(*)', function(req, res, next) {
+          var file = req.params.file
+            //, path = __dirname + '/Docs/' + file;
+            , path = 'versionedDocs/' + file;
 
           res.download(path);
         });

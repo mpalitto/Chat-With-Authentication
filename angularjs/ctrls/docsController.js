@@ -8,7 +8,11 @@ function docsController($scope, $http, DocsService) {
   $scope.fileOwner = "";
   $scope.filePath = "";
 
-  DocsService.subscribe(function(){$scope.fileTree = DocsService.getTree()});
+  DocsService.subscribe(function(){
+      $scope.fileTree = DocsService.getTree();
+      $scope.showDownload = false;
+      $scope.showDetails = false;
+  });
   $scope.updateTree = function() {
       DocsService.updateTree($http).then(function() { 
           $scope.DocTree = DocsService.getTree(); 
@@ -33,7 +37,7 @@ function docsController($scope, $http, DocsService) {
           if( $scope.abc.currentNode.type == 'leaf') {
               $http({
                   url: '/checkFilesPermission',
-                  method: "GET",
+                  method: "POST",
                   cache: false,
                   params: { 0: '{ "name": "'+ $scope.abc.currentNode.name +'"}' }
               }).success(function(data, status, headers, config) {

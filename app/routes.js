@@ -282,7 +282,7 @@ var partial = {
         //     jquery183minjs: { download: { all: 'allow' }, owner: { all: 'allow' } }
         // };
 
-        app.get('/checkFilesPermission', function(req, res) {
+        app.post('/checkFilesPermission', function(req, res) {
             //console.log(req.query);
             var permissions = [];
             var k = [];

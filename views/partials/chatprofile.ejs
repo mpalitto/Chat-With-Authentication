@@ -3,14 +3,20 @@
 <script>
 var uploadCtrl = ['$scope', '$upload', '$http', 'DocsService', function ($scope, $upload, $http, DocsService) {
     $scope.selectFile = function ($files) {
-        console.log('slected files: '+$files);
-        $scope.files = $files;
+        console.log('slected files: ');
+        $scope.files = {};
+        for (var i = 0; i < $files.length; i++) {
+            $scope.files[i] = {};
+            $scope.files[i].name = $files[i].name;
+        }
+        //$scope.files = {};
+        //console.log($scope.files);
         $scope.percent = 0;
         $http({
             url: '/checkFilesPermission',
-            method: "GET",
+            method: "POST",
             cache: false,
-            params: $files
+            params: $scope.files
         }).success(function(data, status, headers, config) {
             console.log(data);
             for (var i = 0; i < $files.length; i++) {
@@ -47,7 +53,7 @@ var dragNdropCtrl = ['$scope', '$http', 'DocsService', function($scope, $http, D
         console.log('Item:' + item +  ' has been dropped in: ' + bin);
         $http({
             url: '/checkFilesPermission',
-            method: "GET",
+            method: "POST",
             cache: false,
             params: { 0: '{ "name": "'+ item+'"}' } 
         }).success(function(data, status, headers, config) {
@@ -69,7 +75,7 @@ var dragNdropCtrl = ['$scope', '$http', 'DocsService', function($scope, $http, D
     }
 }];
 
-        function usersCtrl($scope, $http, UserService, DocsService) {
+        function changeOwnerCtrl($scope, $http, UserService, DocsService) {
             $scope.users = UserService.users;
             $scope.selectedFile = "test";
             $scope.updateDetails = function() {
@@ -114,7 +120,7 @@ var dragNdropCtrl = ['$scope', '$http', 'DocsService', function($scope, $http, D
         <div style="background-color: LightBlue; margin: 10px; padding: 10px" ng-show="showDownload" class="img-rounded">
             <b>{{abc.currentNode.name}}: </b>
             </br>Owner: <b>{{fileOwner}}</b>
-            <div id="detailsForm" ng-show="showDetails" ng-controller="usersCtrl" file='{{abc.currentNode.name}}'>
+            <div id="detailsForm" ng-show="showDetails" ng-controller="changeOwnerCtrl" file='{{abc.currentNode.name}}'>
                 assign new owner:
                 <select ng-model="newowner" ng-options="user for user in users"><option value="">-- choose --</option></select>
                 <button type="submit" ng-click="updateDetails()" value="Apply" ng-model="showDownload">Apply</button>

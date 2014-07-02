@@ -73,6 +73,7 @@ mainApp.directive('droppable', function() {
                 'drop',
                 function(e) {
                     // Stops some browsers from redirecting.
+                    e.preventDefault();
                     if (e.stopPropagation) e.stopPropagation();
 
                     this.classList.remove('over');
@@ -81,6 +82,8 @@ mainApp.directive('droppable', function() {
                     var binId = this.id;
                     //console.log(e.dataTransfer);
                     var item = document.getElementById(e.dataTransfer.getData('Text'));
+                    console.log('item: '+item+' bin: '+binId);
+                    console.log(item);
                     //this.appendChild(item);
                     // call the passed drop function
                     scope.$apply(function(scope) {
